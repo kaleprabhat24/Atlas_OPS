@@ -7,7 +7,7 @@ from enum import Enum
 from typing import Any, Optional
 
 from sqlmodel import JSON, Column, Field, SQLModel
-from sqlalchemy import Column, DateTime
+from sqlalchemy import DateTime
 
 
 

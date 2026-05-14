@@ -83,7 +83,12 @@ async def _simulate_gateway_call(
     """
     redis = get_redis_pool()
     sim_key = f"sim:outage:{gateway_name}"
-    sim_data = await redis.get(sim_key)
+    sim_data = None
+    if redis is not None:
+        try:
+            sim_data = await redis.get(sim_key)
+        except Exception:
+            pass
 
     failure_rate = 0.05  # 5% baseline failure rate
     if sim_data:

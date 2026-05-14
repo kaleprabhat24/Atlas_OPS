@@ -63,6 +63,23 @@ services:
       timeout: 5s
       retries: 5
 
+  # ─── Frontend (React + Vite) ─────────────────────────────────────────
+  frontend:
+    image: node:20-alpine
+    container_name: atlas_frontend
+    restart: unless-stopped
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://atlas-ops:8000
+    depends_on:
+      - atlas-ops
+
 volumes:
   postgres_data:
   redis_data:

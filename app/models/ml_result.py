@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from typing import Any, Optional
 
 from sqlmodel import JSON, Column, Field, SQLModel
-from sqlalchemy import Column, DateTime
+from sqlalchemy import DateTime
 
 
 class MLResult(SQLModel, table=True):

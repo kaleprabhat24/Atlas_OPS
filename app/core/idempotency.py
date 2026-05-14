@@ -41,6 +41,10 @@ class IdempotencyMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         redis = get_redis_pool()
+        if redis is None:
+            # Redis unavailable — skip idempotency, process normally
+            return await call_next(request)
+
         cache_key = f"idempotency:{idempotency_key}"
 
         # ── 1. CHECK CACHE ─────────────────────────────
