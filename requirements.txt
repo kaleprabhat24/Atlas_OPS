@@ -43,3 +43,5 @@ python-json-logger==3.2.1
 # Utilities
 uuid6==2024.1.12
 orjson==3.10.14
+psycopg2-binary==2.9.10
+joblib==1.4.2

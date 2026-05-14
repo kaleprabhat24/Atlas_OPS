@@ -1,5 +1,6 @@
 """
 Async SQLAlchemy engine + session factory for ATLAS-OPS.
+Connects to LOCAL PostgreSQL (managed via pgAdmin).
 """
 from typing import AsyncGenerator
 
@@ -7,8 +8,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlmodel import SQLModel
 
 from app.core.config import get_settings
+from app.core.logging import get_logger
 
 settings = get_settings()
+logger = get_logger(__name__)
 
 engine = create_async_engine(
     settings.database_url,
@@ -38,8 +41,25 @@ async def create_all_tables() -> None:
     try:
         async with engine.begin() as conn:
             await conn.run_sync(SQLModel.metadata.create_all)
+        logger.info("database_tables_created")
     except SQLAlchemyError as exc:
-        print(f"Database connection failed. Ensure PostgreSQL is running. Error: {exc}")
+        logger.error(
+            "database_connection_failed",
+            error=str(exc),
+            hint="Ensure PostgreSQL is running in pgAdmin and 'atlas_ops' database exists. "
+                 "Run: python setup_db.py",
+        )
+        print("\n" + "=" * 60)
+        print("❌ DATABASE CONNECTION FAILED")
+        print("=" * 60)
+        print(f"Error: {exc}")
+        print()
+        print("Quick fix steps:")
+        print("  1. Open pgAdmin and ensure PostgreSQL server is running")
+        print("  2. Run: python setup_db.py")
+        print("  3. Check .env file — update DATABASE_URL with your credentials:")
+        print(f"     Current: {settings.database_url}")
+        print("=" * 60 + "\n")
         import sys
         sys.exit(1)
 
